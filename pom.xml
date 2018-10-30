@@ -191,6 +191,36 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<relocations>
+								<relocation>
+									<pattern>org.apache.xerces</pattern>
+									<shadedPattern>com.siemens.ct.exi.grammars.shade.org.apache.xerces</shadedPattern>
+									<!-- <excludes>
+										<exclude>org.apache.xerces.dom.*</exclude>
+										<exclude>org.apache.xerces.dom3.*</exclude>
+									</excludes> -->
+									<!-- <includes>
+										<include>org.apache.xerces.xs.*</include>
+										<include>org.apache.xerces.impl.xs.*</include>
+										<include>org.apache.xerces.xni.*</include>
+									</includes> -->
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
