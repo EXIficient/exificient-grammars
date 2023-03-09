@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<xs:schema 
+	xmlns:xs='http://www.w3.org/2001/XMLSchema'
+	xmlns:exi='http://jabber.org/protocol/compress/exi'
+	targetNamespace='urn:xmpp:exi:default'
+	elementFormDefault='qualified'>
+	<xs:import namespace='http://etherx.jabber.org/streams' schemaLocation="streams.xsd"/>
+	<xs:import namespace='http://jabber.org/protocol/compress/exi' schemaLocation="xep-0322-01.xsd"/>
+</xs:schema>

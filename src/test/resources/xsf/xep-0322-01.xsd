@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema
+    xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    targetNamespace='http://jabber.org/protocol/compress/exi'
+    xmlns='http://jabber.org/protocol/compress/exi'
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    xmlns:client='jabber:client'
+    xmlns:streams='http://etherx.jabber.org/streams'
+    elementFormDefault='qualified'>
+    
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xs:import namespace="http://etherx.jabber.org/streams"/>
+    
+    <xs:element name='setup' type='Setup'/>
+    <xs:element name='setupResponse' type='SetupResponse'/>
+
+    <xs:complexType name='Setup'>
+        <xs:choice minOccurs='0' maxOccurs='unbounded'>
+            <xs:element name='schema' type='Schema'/>
+            <xs:element name='datatypeRepresentationMap' type='DatatypeRepresentationMap'/>
+        </xs:choice>
+        <xs:attributeGroup ref='Options'/>
+    <xs:attribute name='configurationId' type='xs:string' use='optional'/>
+    <xs:attribute name='configurationLocation' type='xs:string' use='optional'/>
+    </xs:complexType>
+
+    <xs:complexType name='SetupResponse'>
+        <xs:choice minOccurs='0' maxOccurs='unbounded'>
+            <xs:element name='schema' type='Schema'/>
+            <xs:element name='datatypeRepresentationMap' type='DatatypeRepresentationMap'/>
+        <xs:element name='missingSchema' type='Schema'/>
+        </xs:choice>
+        <xs:attributeGroup ref='Options'/>
+    <xs:attribute name='configurationId' type='xs:string' use='optional'/>
+    <xs:attribute name='configurationLocation' type='xs:string' use='optional'/>
+    <xs:attribute name='agreement' type='xs:boolean' use='optional' default='false'/>
+    </xs:complexType>
+    
+    <xs:complexType name='Schema'>
+        <xs:attribute name='ns' type='xs:string' use='required'/>
+        <xs:attribute name='bytes' type='xs:positiveInteger' use='required'/>
+        <xs:attribute name='md5Hash' type='MD5Hash' use='required'/>
+    </xs:complexType>
+    
+    <xs:complexType name='DatatypeRepresentationMap'>
+        <xs:attribute name='type' type='xs:string' use='required'/>
+        <xs:attribute name='representAs' type='xs:string' use='required'/>
+    </xs:complexType>
+    
+    <xs:attributeGroup name='Options'>
+        <xs:attribute name='version' type='xs:positiveInteger' use='optional' default='1'/>
+        <xs:attribute name='alignment' type='Alignment' use='optional' default='bit-packed'>
+            <xs:annotation>
+                <xs:documentation>The alignment option is used to control the alignment of event codes and content items. The value is one of bit-packed, byte-alignment or pre-compression, of which bit-packed is the default value assumed when the "alignment" element is absent in the EXI Options document. The option values byte-alignment and pre-compression are effected when "byte" and "pre-compress" elements are present in the EXI Options document, respectively. When the value of compression option is set to true, alignment of the EXI Body is governed by the rules specified in 9. EXI Compression instead of the alignment option value. The "alignment" element MUST NOT appear in an EXI options document when the "compression" element is present.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='compression' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>The compression option is a Boolean used to increase compactness using additional computational resources. The default value "false" is assumed when the "compression" element is absent in the EXI Options document whereas its presence denotes the value "true". When set to true, the event codes and associated content are compressed according to 9. EXI Compression regardless of the alignment option value. As mentioned above, the "compression" element MUST NOT appear in an EXI options document when the "alignment" element is present.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='strict' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>The strict option is a Boolean used to increase compactness by using a strict interpretation of the schemas and omitting preservation of certain items, such as comments, processing instructions and namespace prefixes. The default value "false" is assumed when the "strict" element is absent in the EXI Options document whereas its presence denotes the value "true". When set to true, those productions that have NS, CM, PI, ER, and SC terminal symbols are omitted from the EXI grammars, and schema-informed element and type grammars are restricted to only permit items declared in the schemas. A note in section 8.5.4.4.2 Adding Productions when Strict is True describes some additional restrictions consequential of the use of this option. The "strict" element MUST NOT appear in an EXI options document when one of "dtd", "prefixes", "comments", "pis" or "selfContained" element is present in the same options document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='preserveComments' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>Comments are preserved. Must not be used together with the strict option.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='preservePIs' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>Processing instructions are preserved. Must not be used together with the strict option.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='preserveDTD' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>DTD is preserved. Must not be used together with the strict option.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='preservePrefixes' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>Prefixes are preserved. Must not be used together with the strict option.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='preserveLexical' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>Lexical form of element and attribute values can be preserved in value content items. Can be used together with the strict option.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='selfContained' type='xs:boolean' use='optional' default='false'>
+            <xs:annotation>
+                <xs:documentation>The selfContained option is a Boolean used to enable the use of self-contained elements in the EXI stream. Self-contained elements may be read independently from the rest of the EXI body, allowing them to be indexed for random access. The "selfContained" element MUST NOT appear in an EXI options document when one of "compression", "pre-compression" or "strict" elements are present in the same options document. The default value "false" is assumed when the "selfContained" element is absent from the EXI Options document whereas its presence denotes the value "true".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='blockSize' type='xs:positiveInteger' use='optional' default='1000000'>
+            <xs:annotation>
+                <xs:documentation>The blockSize option specifies the block size used for EXI compression. When the "blockSize" element is absent in the EXI Options document, the default blocksize of 1,000,000 is used. The default blockSize is intentionally large but can be reduced for processing large documents on devices with limited memory.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='valueMaxLength' type='xs:positiveInteger' use='optional'>
+            <xs:annotation>
+                <xs:documentation>The valueMaxLength option specifies the maximum length of value content items to be considered for addition to the string table. The default value "unbounded" is assumed when the "valueMaxLength" element is absent in the EXI Options document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name='valuePartitionCapacity' type='xs:positiveInteger' use='optional'>
+            <xs:annotation>
+                <xs:documentation>The valuePartitionCapacity option specifies the maximum number of value content items in the string table at any given time. The default value "unbounded" is assumed when the "valuePartitionCapacity" element is absent in the EXI Options document. Section 7.3.3 Partitions Optimized for Frequent use of String Literals specifies the behavior of the string table when this capacity is reached.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    <xs:attribute name='sessionWideBuffers' type='xs:boolean' use='optional' default='false'>
+        <xs:annotation>
+        <xs:documentation>If set to true, all buffers, string tables, etc. will be maintained during the entire session. This may improve performance during time since strings
+        can be omitted in the compressed binary stream, but it might also in some cases degrade performance since more options are available in the tables, requiring more bits 
+        to encode strings. The default value is false, meaning that buffers, string tables, etc., are cleared between each stanza.</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    </xs:attributeGroup>
+    
+    <xs:simpleType name='MD5Hash'>
+        <xs:restriction base='xs:string'>
+            <xs:pattern value='[0-9a-f]{32}'/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name='Alignment'>
+        <xs:restriction base='xs:string'>
+            <xs:enumeration value='bit-packed'>
+                <xs:annotation>
+                    <xs:documentation>The alignment option value bit-packed indicates that the event codes and associated content are packed in bits without any padding in-between.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value='byte-alignment'>
+                <xs:annotation>
+                    <xs:documentation>The alignment option value byte-alignment indicates that the event codes and associated content are aligned on byte boundaries. While byte-alignment generally results in EXI streams of larger sizes compared with their bit-packed equivalents, byte-alignment may provide a help in some use cases that involve frequent copying of large arrays of scalar data directly out of the stream. It can also make it possible to work with data in-place and can make it easier to debug encoded data by allowing items on aligned boundaries to be easily located in the stream.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value='pre-compression'>
+                <xs:annotation>
+                    <xs:documentation>The alignment option value pre-compression indicates that all steps involved in compression (see section 9. EXI Compression) are to be done with the exception of the final step of applying the DEFLATE algorithm. The primary use case of pre-compression is to avoid a duplicate compression step when compression capability is built into the transport protocol. In this case, pre-compression just prepares the stream for later compression.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name='uploadSchema'>
+    <xs:complexType>
+        <xs:simpleContent>
+        <xs:extension base='xs:base64Binary'>
+            <xs:attribute name='contentType' type='ContentType' use='optional' default='Text'/>
+            <xs:attribute name='bytes' type='xs:positiveInteger' use='optional'/>
+            <xs:attribute name='md5Hash' type='MD5Hash' use='optional'/>
+        </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name='ContentType'>
+    <xs:restriction base='xs:string'>
+        <xs:enumeration value='Text'/>
+        <xs:enumeration value='ExiBody'/>
+        <xs:enumeration value='ExiDocument'/>
+    </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name='downloadSchema' type='DownloadSchema'/>
+    <xs:element name='downloadSchemaResponse' type='DownloadSchemaResponse'/>
+
+    <xs:complexType name='DownloadSchema'>
+        <xs:attribute name='url' type='xs:string' use='required'/>
+    </xs:complexType>
+    
+    <xs:complexType name='DownloadSchemaResponse'>
+        <xs:complexContent>
+            <xs:extension base='DownloadSchema'>
+        <xs:choice minOccurs='0' maxOccurs='1'>
+            <xs:element name='httpError'>
+            <xs:complexType>
+                <xs:attribute name='code' type='xs:positiveInteger' use='required'/>
+                <xs:attribute name='message' type='xs:string' use='required'/>
+            </xs:complexType>
+            </xs:element>
+            <xs:element name='invalidUrl'>
+            <xs:complexType>
+                <xs:attribute name='message' type='xs:string' use='required'/>
+            </xs:complexType>
+            </xs:element>
+            <xs:element name='timeout'>
+            <xs:complexType>
+                <xs:attribute name='message' type='xs:string' use='required'/>
+            </xs:complexType>
+            </xs:element>
+            <xs:element name='invalidContentType'>
+            <xs:complexType>
+                <xs:attribute name='contentTypeReturned' type='xs:string' use='required'/>
+            </xs:complexType>
+            </xs:element>
+            <xs:element name='error'>
+            <xs:complexType>
+                <xs:attribute name='message' type='xs:string' use='required'/>
+            </xs:complexType>
+            </xs:element>
+        </xs:choice>
+                <xs:attribute name='result' type='xs:boolean' use='required'/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:element name='open'>
+    <xs:complexType>
+        <xs:sequence>
+        <xs:element name='xmlns' minOccurs='0' maxOccurs='unbounded'>
+            <xs:complexType>
+            <xs:attribute name='prefix' type='xs:string' use='required'/>
+            <xs:attribute name='namespace' type='xs:string' use='required'/>
+            </xs:complexType>
+        </xs:element>
+        <xs:element ref='streams:features'
+                minOccurs='0'
+                maxOccurs='1'/>
+        <xs:any namespace='urn:ietf:params:xml:ns:xmpp-tls'
+            minOccurs='0'
+            maxOccurs='1'/>
+        <xs:any namespace='urn:ietf:params:xml:ns:xmpp-sasl'
+            minOccurs='0'
+            maxOccurs='1'/>
+        <xs:element ref='streams:error' minOccurs='0' maxOccurs='1'/>
+        </xs:sequence>
+        <xs:attribute name='from' type='xs:string' use='optional'/>
+        <xs:attribute name='id' type='xs:string' use='optional'/>
+        <xs:attribute name='to' type='xs:string' use='optional'/>
+        <xs:attribute name='version' type='xs:decimal' use='optional'/>
+        <xs:attribute ref='xml:lang' use='optional'/>
+        <xs:anyAttribute namespace='##other' processContents='lax'/>
+    </xs:complexType>
+    </xs:element>
+    
+    <xs:element name='streamEnd'>
+    <xs:complexType/>
+    </xs:element>
+    
+</xs:schema>
